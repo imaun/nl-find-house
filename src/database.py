@@ -8,11 +8,25 @@ class Database:
         self._cursor = self._connection.cursor()
 
     def migrate_db(self):
+        sql_source = """
+            CREATE TABLE IF NOT EXISTS [Source]
+            (
+                [Id] TEXT NOT NULL PRIMARY KEY,
+                [Name] TEXT NOT NULL,
+                [City] TEXT NOT NULL,
+                [Url] TEXT NOT NULL,
+                [Status] INTEGER NOT NULL DEFAULT(1),
+                [Description] TEXT
+            )
+        """
+        self._connection.execute(sql_source)
+
         sql_house = """
             CREATE TABLE IF NOT EXISTS [House]
             (
                 [Id] TEXT NOT NULL PRIMARY KEY,
-                [Source] TEXT NOT NULL,
+                [SourceName] TEXT NOT NULL,
+                [SourceId] INTEGER NOT NULL,
                 [Url] TEXT NOT NULL,
                 [Image_Url] TEXT,
                 [Title] TEXT NOT NULL,
@@ -25,7 +39,8 @@ class Database:
                 [Rooms] TEXT,
                 [Area] TEXT,
                 [Interior] TEXT,
-                [Description] TEXT
+                [Description] TEXT,
+                FOREIGN KEY (SourceId) REFERENCES Source(Id)
             )
         """
         self._connection.execute(sql_house)
@@ -75,3 +90,4 @@ class Database:
                 FOREIGN KEY (ChannelId) REFERENCES Channel(Id)
             )
         """
+        self._connection.execute(sql_outbox)
