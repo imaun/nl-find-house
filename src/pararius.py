@@ -19,7 +19,8 @@ class Pararius:
             title = e_title.text.strip()
             print(title)
             title_href = e_title.find('a').get('href')
-            print(self._baseUrl + title_href)
+            item_url = self._baseUrl + title_href
+            print(item_url)
             picture = item.find('img', {"class": "picture__image"}).get('src')
             print(picture)
             address = item.find('div', {"class": "listing-search-item__sub-title'"}).text.strip()
