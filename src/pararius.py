@@ -1,6 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
 
+
+class Pararius:
+    def __int__(self, url):
+        self._source = 'pararius'
+        self._baseUrl = 'https://www.pararius.com'
+        self._url = url
+
+
+    def get_houses(self):
+
+
+
 url = 'https://www.pararius.com/apartments/amsterdam'
 base_url = 'https://www.pararius.com'
 

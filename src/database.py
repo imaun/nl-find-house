@@ -91,3 +91,11 @@ class Database:
             )
         """
         self._connection.execute(sql_outbox)
+
+
+    def is_house_url_exists(self, url):
+        query = 'SELECT COUNT(Id) FROM [House] WHERE [Url] = ?'
+        count = int(self._cursor.execute(query, [url]).fetchone()[0])
+        return count == 0
+
+
