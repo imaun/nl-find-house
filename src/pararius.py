@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from database import Database
 
 
 class Pararius:
@@ -9,6 +10,7 @@ class Pararius:
         self._url = url
 
     def get_houses(self):
+        db = Database()
         page = requests.get(self._url)
         html = BeautifulSoup(page.content, 'html.parser')
         search_result = html.find('ul', {"class": "search-list"})
@@ -20,6 +22,8 @@ class Pararius:
             print(title)
             title_href = e_title.find('a').get('href')
             item_url = self._baseUrl + title_href
+            if db.is_house_url_exists(item_url):
+                continue
             print(item_url)
             picture = item.find('img', {"class": "picture__image"}).get('src')
             print(picture)
@@ -37,4 +41,3 @@ class Pararius:
             interior = item.find('li', {
                 "class": "illustrated-features__item illustrated-features__item--interior"}).text.strip()
             print(interior)
-            exit(0)
