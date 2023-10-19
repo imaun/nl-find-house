@@ -41,3 +41,6 @@ class Pararius:
             interior = item.find('li', {
                 "class": "illustrated-features__item illustrated-features__item--interior"}).text.strip()
             print(interior)
+
+    def add(self, url, title, image_url, city, house_type,
+            price_text, price, rooms, area, interior, desc):

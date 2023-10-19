@@ -1,4 +1,5 @@
 import sqlite3
+from models import Source, House
 
 
 class Database:
@@ -97,4 +98,36 @@ class Database:
         count = int(self._cursor.execute(query, [url]).fetchone()[0])
         return count == 0
 
+    def get_source_by_name(self, name):
+        query = 'SELECT * FROM [Source] WHERE [Name] = ?'
+        self._cursor.execute(query, [name])
+        data = self._cursor.fetchall()[0]
+        return Source(*data)
 
+    def insert_house(self, house: House):
+        query = """
+            INSERT INTO [House]
+                (SourceName, SourceId, Url, ImageUrl, Title, City, House_Type,
+                    Price_Text, Price, Status, Create_Date, Rooms, Area, Interior,
+                    Description)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        self._cursor.execute(query, [
+            house.source_name,
+            house.source_id,
+            house.url,
+            house.image_url,
+            house.title,
+            house.city,
+            house.house_type,
+            house.price_text,
+            house.price,
+            house.status,
+            house.create_date,
+            house.rooms,
+            house.area,
+            house.interior,
+            house.description
+        ])
+        self._connection.commit()

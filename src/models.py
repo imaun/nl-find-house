@@ -28,3 +28,14 @@ class Source:
         self.url = url
         self.status = status
         self.description = description
+
+
+class User:
+    def __int__(self, id, username, telegram_id, email, phone, status, create_date):
+        self.id = id
+        self.username = username
+        self.telegram_id = telegram_id
+        self.email = email
+        self.phone = phone
+        self.status = status
+        self.create_date = create_date
