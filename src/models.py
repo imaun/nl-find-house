@@ -54,3 +54,12 @@ class Channel:
         self.status = status
         self.create_date = create_date
         self.user_id = user_id
+
+
+class OutboxMessage:
+    def __init__(self, id, house_id, user_id, channel_id, create_date):
+        self.id = id
+        self.house_id = house_id
+        self.user_id = user_id
+        self.channel_id = channel_id
+        self.create_date = create_date

@@ -12,7 +12,7 @@ class Database:
         sql_source = """
             CREATE TABLE IF NOT EXISTS [Source]
             (
-                [Id] TEXT NOT NULL PRIMARY KEY,
+                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [Name] TEXT NOT NULL,
                 [City] TEXT NOT NULL,
                 [Url] TEXT NOT NULL,
@@ -25,7 +25,7 @@ class Database:
         sql_house = """
             CREATE TABLE IF NOT EXISTS [House]
             (
-                [Id] TEXT NOT NULL PRIMARY KEY,
+                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [SourceName] TEXT NOT NULL,
                 [SourceId] INTEGER NOT NULL,
                 [Url] TEXT NOT NULL,
@@ -49,7 +49,7 @@ class Database:
         sql_user = """
             CREATE TABLE IF NOT EXISTS [User]
             (
-                [Id] TEXT NOT NULL PRIMARY KEY,
+                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [Username] TEXT NOT NULL,
                 [TelegramId] TEXT,
                 [Email] TEXT,
@@ -63,7 +63,7 @@ class Database:
         sql_channel = """
             CREATE TABLE IF NOT EXISTS [Channel]
             (
-                [Id] TEXT NOT NULL PRIMARY KEY,
+                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [Title] TEXT,
                 [ChannelId] TEXT NOT NULL,
                 [Price_Start] INTEGER NOT NULL DEFAULT(0),
@@ -81,7 +81,7 @@ class Database:
         sql_outbox = """
             CREATE TABLE IF NOT EXISTS [Outbox]
             (
-                [Id] TEXT NOT NULL PRIMARY KEY,
+                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [Create_Date] DATETIME NOT NULL,
                 [HouseId] INTEGER NOT NULL,
                 [UserId] INTEGER NOT NULL,
