@@ -19,3 +19,12 @@ class House:
         self.interior = interior
         self.description = description
 
+
+class Source:
+    def __int__(self, id, name, city, url, status, description):
+        self.id = id
+        self.name = name
+        self.city = city
+        self.url = url
+        self.status = status
+        self.description = description
