@@ -39,3 +39,18 @@ class User:
         self.phone = phone
         self.status = status
         self.create_date = create_date
+
+
+class Channel:
+    def __int__(self, id, title, channel_id, price_start, price_end,
+                house_type, cities, status, create_date, user_id):
+        self.id = id
+        self.title = title
+        self.channel_id = channel_id
+        self.price_start = price_start
+        self.price_end = price_end
+        self.house_type = house_type
+        self.cities = cities
+        self.status = status
+        self.create_date = create_date
+        self.user_id = user_id
