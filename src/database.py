@@ -1,4 +1,5 @@
 import sqlite3
+from models import Source, House
 
 
 class Database:
@@ -7,12 +8,27 @@ class Database:
         self._connection = sqlite3.connect(self._dbName)
         self._cursor = self._connection.cursor()
 
-    def migrate(self):
+
+    def migrate_db(self):
+        sql_source = """
+            CREATE TABLE IF NOT EXISTS [Source]
+            (
+                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
+                [Name] TEXT NOT NULL,
+                [City] TEXT NOT NULL,
+                [Url] TEXT NOT NULL,
+                [Status] INTEGER NOT NULL DEFAULT(1),
+                [Description] TEXT
+            )
+        """
+        self._connection.execute(sql_source)
+
         sql_house = """
             CREATE TABLE IF NOT EXISTS [House]
             (
-                [Id] TEXT NOT NULL PRIMARY KEY,
-                [Source] TEXT NOT NULL,
+                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
+                [SourceName] TEXT NOT NULL,
+                [SourceId] INTEGER NOT NULL,
                 [Url] TEXT NOT NULL,
                 [Image_Url] TEXT,
                 [Title] TEXT NOT NULL,
@@ -25,7 +41,8 @@ class Database:
                 [Rooms] TEXT,
                 [Area] TEXT,
                 [Interior] TEXT,
-                [Description] TEXT
+                [Description] TEXT,
+                FOREIGN KEY (SourceId) REFERENCES Source(Id)
             )
         """
         self._connection.execute(sql_house)
@@ -33,7 +50,7 @@ class Database:
         sql_user = """
             CREATE TABLE IF NOT EXISTS [User]
             (
-                [Id] TEXT NOT NULL PRIMARY KEY,
+                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [Username] TEXT NOT NULL,
                 [TelegramId] TEXT,
                 [Email] TEXT,
@@ -47,7 +64,7 @@ class Database:
         sql_channel = """
             CREATE TABLE IF NOT EXISTS [Channel]
             (
-                [Id] TEXT NOT NULL PRIMARY KEY,
+                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [Title] TEXT,
                 [ChannelId] TEXT NOT NULL,
                 [Price_Start] INTEGER NOT NULL DEFAULT(0),
@@ -65,7 +82,7 @@ class Database:
         sql_outbox = """
             CREATE TABLE IF NOT EXISTS [Outbox]
             (
-                [Id] TEXT NOT NULL PRIMARY KEY,
+                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [Create_Date] DATETIME NOT NULL,
                 [HouseId] INTEGER NOT NULL,
                 [UserId] INTEGER NOT NULL,
@@ -76,3 +93,42 @@ class Database:
             )
         """
         self._connection.execute(sql_outbox)
+
+    def is_house_url_exists(self, url):
+        query = 'SELECT COUNT(Id) FROM [House] WHERE [Url] = ?'
+        count = int(self._cursor.execute(query, [url]).fetchone()[0])
+        return count == 0
+
+    def get_source_by_name(self, name):
+        query = 'SELECT * FROM [Source] WHERE [Name] = ?'
+        self._cursor.execute(query, [name])
+        data = self._cursor.fetchall()[0]
+        return Source(*data)
+
+    def insert_house(self, house: House):
+        query = """
+            INSERT INTO [House]
+                (SourceName, SourceId, Url, ImageUrl, Title, City, House_Type,
+                    Price_Text, Price, Status, Create_Date, Rooms, Area, Interior,
+                    Description)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        self._cursor.execute(query, [
+            house.source_name,
+            house.source_id,
+            house.url,
+            house.image_url,
+            house.title,
+            house.city,
+            house.house_type,
+            house.price_text,
+            house.price,
+            house.status,
+            house.create_date,
+            house.rooms,
+            house.area,
+            house.interior,
+            house.description
+        ])
+        self._connection.commit()
