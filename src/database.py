@@ -7,7 +7,7 @@ class Database:
         self._connection = sqlite3.connect(self._dbName)
         self._cursor = self._connection.cursor()
 
-    def migrate_db(self):
+    def migrate(self):
         sql_house = """
             CREATE TABLE IF NOT EXISTS [House]
             (
@@ -75,3 +75,4 @@ class Database:
                 FOREIGN KEY (ChannelId) REFERENCES Channel(Id)
             )
         """
+        self._connection.execute(sql_outbox)

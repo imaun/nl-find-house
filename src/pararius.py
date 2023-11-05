@@ -1,8 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 
-url = 'https://www.pararius.com/apartments/amsterdam'
-base_url = 'https://www.pararius.com'
+class ParariusCrawler():
+    def __init__(self):
+        self.base_url = 'https://www.pararius.com'
+        self.url = 'https://www.pararius.com/apartments/amsterdam'
+
+
+    def start(self):
+
 
 page = requests.get(url)
 html = BeautifulSoup(page.content, 'html.parser')
