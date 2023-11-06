@@ -1,28 +1,31 @@
 import requests
 from bs4 import BeautifulSoup
 from database import Database
+from models import House
 
 
 class Pararius:
     def __int__(self, url):
-        self._source = 'pararius'
+        self._sourceName = 'pararius'
         self._baseUrl = 'https://www.pararius.com'
         self._url = url
+        self._db = Database()
+        self._source = self._db.get_source_by_name(self._sourceName)
+
 
     def get_houses(self):
-        db = Database()
         page = requests.get(self._url)
         html = BeautifulSoup(page.content, 'html.parser')
         search_result = html.find('ul', {"class": "search-list"})
         items = search_result.find_all("li", {"class": "search-list__item"})
-        print(f'Found {len(items)} on "{self._source}"... ')
+        print(f'Found {len(items)} on "{self._sourceName}"... ')
         for item in items:
             e_title = item.find('h2', {"class": "listing-search-item__title"})
             title = e_title.text.strip()
             print(title)
             title_href = e_title.find('a').get('href')
             item_url = self._baseUrl + title_href
-            if db.is_house_url_exists(item_url):
+            if self._db.is_house_url_exists(item_url):
                 continue
             print(item_url)
             picture = item.find('img', {"class": "picture__image"}).get('src')
@@ -44,4 +47,7 @@ class Pararius:
 
     def add(self, url, title, image_url, city, house_type,
             price_text, price, rooms, area, interior, desc):
+        h = House()
+        h.source_name = self._sourceName
         pass
+
