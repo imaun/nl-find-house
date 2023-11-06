@@ -12,7 +12,6 @@ class Pararius:
         self._db = Database()
         self._source = self._db.get_source_by_name(self._sourceName)
 
-
     def get_houses(self):
         page = requests.get(self._url)
         html = BeautifulSoup(page.content, 'html.parser')
@@ -20,6 +19,7 @@ class Pararius:
         items = search_result.find_all("li", {"class": "search-list__item"})
         print(f'Found {len(items)} on "{self._sourceName}"... ')
         for item in items:
+            h = House()
             e_title = item.find('h2', {"class": "listing-search-item__title"})
             title = e_title.text.strip()
             print(title)
@@ -48,6 +48,18 @@ class Pararius:
     def add(self, url, title, image_url, city, house_type,
             price_text, price, rooms, area, interior, desc):
         h = House()
+        h.title = title
         h.source_name = self._sourceName
-        pass
-
+        h.source_id = self._source.id
+        h.url = url
+        h.image_url = image_url
+        h.city = city
+        h.house_type = house_type
+        h.price_text = price_text
+        h.price = price
+        h.rooms = rooms
+        h.area = area
+        h.interior = interior
+        h.description = desc
+        self._db.insert_house(h)
+        print(f'The House "{h.title}" successfully added to the database.')
