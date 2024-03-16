@@ -8,6 +8,7 @@ from models import Source
 class Pararius:
     def __init__(self, source: Source) -> object:
         self._sourceName: str = 'pararius'
+        self._source_id: int = source.id
         self._baseUrl: str = source.base_url
         self._page_url: str = source.page_url
         self._paging_format: str = source.paging_format
@@ -65,7 +66,7 @@ class Pararius:
         h = House()
         h.title = title
         h.source_name = self._sourceName
-        h.source_id = self._source.id
+        h.source_id = self._source_id
         h.url = url
         h.image_url = image_url
         h.city = city
