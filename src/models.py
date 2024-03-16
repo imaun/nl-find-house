@@ -1,5 +1,5 @@
 class House:
-    def __int__(self, id, source_name, source_id, url, image_url,
+    def __init__(self, id, source_name, source_id, url, image_url,
                 title, city, house_type, price_text, price,
                 status, create_date, rooms, area, interior, description):
 
@@ -22,7 +22,7 @@ class House:
 
 
 class Source:
-    def __int__(self, id: int, name: str, city: str, base_url: str, page_url: str,
+    def __init__(self, id: int, name: str, city: str, base_url: str, page_url: str,
                 paging_format: str, start_page_index: int, status: int, description: str):
 
         self.id = id
@@ -38,7 +38,7 @@ class Source:
 
 
 class User:
-    def __int__(self, id, username, telegram_id, email, phone, status, create_date):
+    def __init__(self, id, username, telegram_id, email, phone, status, create_date):
         self.id = id
         self.username = username
         self.telegram_id = telegram_id
@@ -49,7 +49,7 @@ class User:
 
 
 class Channel:
-    def __int__(self, id, title, channel_id, price_start, price_end,
+    def __init__(self, id, title, channel_id, price_start, price_end,
                 house_type, cities, status, create_date, user_id):
         self.id = id
         self.title = title

@@ -6,14 +6,16 @@ db.migrate_db()
 
 db.seed_sources()
 
-sources = db.get_sources_by_name('pararius')
+__Pararius = 'pararius'
+
+sources = db.get_sources_by_name(__Pararius)
 for src in sources:
     print('Starting to crawl {} in city {} with url {}'
           .format(src.name, src.city, src.page_url))
+    if src.name == __Pararius:
+        pararius = Pararius(src)
+        pararius.crawl()
 
-prius = Pararius(url='https://www.pararius.com/apartments/amsterdam')
-
-houses = prius.get_houses()
-
-print('finished')
+print('Finished!')
+print('Exiting...')
 
