@@ -15,7 +15,9 @@ class Database:
                 [id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [name] TEXT NOT NULL,
                 [city] TEXT NOT NULL,
-                [url] TEXT NOT NULL,
+                [base_url] TEXT NOT NULL,
+                [page_url] TEXT NOT NULL,
+                [paging_format] TEXT,
                 [status] INTEGER NOT NULL DEFAULT(1),
                 [description] TEXT
             )
