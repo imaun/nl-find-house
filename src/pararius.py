@@ -24,7 +24,8 @@ class Pararius:
         return url + self._paging_format.replace('%', str(self._page_index))
 
     def crawl(self):
-        page = requests.get(self._page_index)
+        url = self.get_url()
+        page = requests.get(url)
         html = BeautifulSoup(page.content, 'html.parser')
         search_result = html.find('ul', {"class": "search-list"})
         items = search_result.find_all("li", {"class": "search-list__item"})
