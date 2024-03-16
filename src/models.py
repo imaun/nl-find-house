@@ -2,6 +2,7 @@ class House:
     def __int__(self, id, source_name, source_id, url, image_url,
                 title, city, house_type, price_text, price,
                 status, create_date, rooms, area, interior, description):
+
         self.id = id
         self.source_name = source_name
         self.source_id = source_id
@@ -21,13 +22,16 @@ class House:
 
 
 class Source:
-    def __int__(self, id, name, city, base_url, page_url, paging_format, status, description):
+    def __int__(self, id: int, name: str, city: str, base_url: str, page_url: str,
+                paging_format: str, start_page_index: int, status: int, description: str):
+
         self.id = id
         self.name = name
         self.city = city
         self.base_url = base_url
         self.page_url = page_url
         self.paging_format = paging_format
+        self.start_page_index = start_page_index
         self.status = status
         self.description = description
 

@@ -2,17 +2,24 @@ import requests
 from bs4 import BeautifulSoup
 from database import Database
 from models import House
+from models import Source
 
 
 class Pararius:
-    def __init__(self, url: str) -> object:
-        self._sourceName = 'pararius'
-        self._baseUrl = 'https://www.pararius.com'
-        self._url = url
+    def __init__(self, source: Source) -> object:
+        self._sourceName: str = 'pararius'
+        self._baseUrl: str = source.base_url
+        self._page_url: str = source.page_url
+        self._paging_format: str = source.paging_format
+        self._start_page_index: int = source.start_page_index
+        self._page_index: int = source.start_page_index  # Pararius start page number
         self._db = Database()
-        self._source = self._db.get_source_by_name(self._sourceName)
 
-    def get_houses(self):
+    def get_url(self):
+        # Add / if baseUrl does not ends with it
+        url: str = self._baseUrl.rstrip('/') + '/' + self._page_url
+
+    def crawl(self):
         page = requests.get(self._url)
         html = BeautifulSoup(page.content, 'html.parser')
         search_result = html.find('ul', {"class": "search-list"})
@@ -21,20 +28,25 @@ class Pararius:
         for item in items:
             h = House()
             e_title = item.find('h2', {"class": "listing-search-item__title"})
-            title = e_title.text.strip()
-            print(title)
+            h.title = e_title.text.strip()
             title_href = e_title.find('a').get('href')
             item_url = self._baseUrl + title_href
+
+            print('[{}] found a new house: {}'.format(self._sourceName, item_url))
             if self._db.is_house_url_exists(item_url):
+                print('Skipping the house with url: {} because already exists!'.format(item_url))
                 continue
-            print(item_url)
+
             picture = item.find('img', {"class": "picture__image"}).get('src')
-            print(picture)
+            print('[{}] picture: {}'.format(self._sourceName, picture))
+
             address = item.find('div', {"class": "listing-search-item__sub-title'"}).text.strip()
-            print(address)
+            print('[{}] address: {}'.format(self._sourceName, address))
+
             price_text = item.find("div", {"class": "listing-search-item__price"}).text.strip()
             price = int(price_text[1:].split(' ')[0].replace(',', ''))
-            print(price)
+            print('[{}] price: {}'.format(self._sourceName, price))
+
             area = item.find('li', {
                 "class": "illustrated-features__item illustrated-features__item--surface-area"}).text.strip()
             print(area)
@@ -62,4 +74,3 @@ class Pararius:
         h.interior = interior
         h.description = desc
         self._db.add_house(h)
-        print(f'The House "{h.title}" successfully added to the database.')

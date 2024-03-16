@@ -1,5 +1,7 @@
-import os, json
+import json
+import os
 import sqlite3
+
 from models import Source, House
 
 
@@ -20,6 +22,7 @@ class Database:
                 [base_url] TEXT NOT NULL,
                 [page_url] TEXT NOT NULL,
                 [paging_format] TEXT,
+                [start_page_index] INT NOT NULL DEFAULT(0),
                 [status] INTEGER NOT NULL DEFAULT(1),
                 [description] TEXT
             )
