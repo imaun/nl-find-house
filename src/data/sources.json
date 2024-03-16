@@ -4,7 +4,7 @@
     "city": "amsterdam",
     "base_url": "https://www.pararius.com",
     "page_url": "/apartments/amsterdam",
-    "paging_format": "page-%",
+    "paging_format": "/page-%",
     "start_page_index": 1,
     "status": 1,
     "description": null

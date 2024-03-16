@@ -18,9 +18,12 @@ class Pararius:
     def get_url(self):
         # Add / if baseUrl does not ends with it
         url: str = self._baseUrl.rstrip('/') + '/' + self._page_url
+        if self._page_index == self._start_page_index:
+            return url
+        return url + self._paging_format.replace('%', str(self._page_index))
 
     def crawl(self):
-        page = requests.get(self._url)
+        page = requests.get(self._page_index)
         html = BeautifulSoup(page.content, 'html.parser')
         search_result = html.find('ul', {"class": "search-list"})
         items = search_result.find_all("li", {"class": "search-list__item"})
