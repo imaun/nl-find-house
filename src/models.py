@@ -21,13 +21,16 @@ class House:
 
 
 class Source:
-    def __int__(self, id, name, city, url, status, description):
+    def __int__(self, id, name, city, base_url, page_url, paging_format, status, description):
         self.id = id
         self.name = name
         self.city = city
-        self.url = url
+        self.base_url = base_url
+        self.page_url = page_url
+        self.paging_format = paging_format
         self.status = status
         self.description = description
+
 
 
 class User:

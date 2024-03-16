@@ -102,15 +102,13 @@ class Database:
     def add_source(self, source: Source):
         query = """
             INSERT INTO [Source] 
-                ([name], [city], [url], [status], [description])
+                ([name], [city], [base_url], [page_url], [paging_format], [status], [description])
             VALUES
-                (?, ?, ?, ? , ?)
+                (?, ?, ?, ? , ?, ?, ?)
         """
         self._cursor.execute(query, [
-            source.name, source.city, source.url, source.status, source.description
-        ])
-
-
+            source.name, source.city, source.base_url,
+            source.page_url, source.status, source.description])
 
     def get_source_by_name(self, name):
         query = 'SELECT * FROM [Source] WHERE [name] = ?'
@@ -134,6 +132,5 @@ class Database:
             house.source_name, house.source_id, house.url, house.image_url,
             house.title, house.city, house.house_type, house.price_text,
             house.price, house.status, house.create_date, house.rooms,
-            house.area, house.interior, house.description
-        ])
+            house.area, house.interior, house.description])
         self._connection.commit()

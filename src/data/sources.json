@@ -1,0 +1,12 @@
+[
+  {
+    "name": "pararius",
+    "city": "amsterdam",
+    "base_url": "https://www.pararius.com",
+    "page_url": "/apartments/amsterdam",
+    "paging_format": "page-%",
+    "status": 1,
+    "description": null
+  }
+
+]
