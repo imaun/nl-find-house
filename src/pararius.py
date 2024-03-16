@@ -61,5 +61,5 @@ class Pararius:
         h.area = area
         h.interior = interior
         h.description = desc
-        self._db.insert_house(h)
+        self._db.add_house(h)
         print(f'The House "{h.title}" successfully added to the database.')

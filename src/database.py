@@ -1,3 +1,4 @@
+import os, json
 import sqlite3
 from models import Source, House
 
@@ -96,6 +97,21 @@ class Database:
         """
         self._connection.execute(sql_outbox)
 
+    def seed_sources(self):
+        file_path = 'data/sources.json'
+        if not os.path.exists(file_path):
+            raise FileNotFoundError('The source seed data at {} not found!'.format(file_path))
+
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+
+        sources = []
+        for src in data:
+            sources.append(Source(**src))
+
+        for source in sources:
+            self.add_source(source)
+
     def is_house_url_exists(self, url):
         query = 'SELECT COUNT(id) FROM [house] WHERE [url] = ?'
         count = int(self._cursor.execute(query, [url]).fetchone()[0])
@@ -111,17 +127,21 @@ class Database:
         self._cursor.execute(query, [
             source.name, source.city, source.base_url,
             source.page_url, source.status, source.description])
+        print('[Db]->[Source] added: name:{} baseUrl:{}, page_url:{}'
+              .format(source.name, source.base_url, source.page_url))
 
-    def get_source_by_name(self, name):
+    def get_sources_by_name(self, name):
         query = 'SELECT * FROM [Source] WHERE [name] = ?'
         self._cursor.execute(query, [name])
-        data = self._cursor.fetchone()
-        # if exists
-        if data: return Source(*data)
-        # try to create default source
-        return Source(*data)
+        data = self._cursor.fetchall()
 
-    def insert_house(self, house: House):
+        sources = []
+        for row in data:
+            sources.append(Source(*row))
+
+        return sources
+
+    def add_house(self, house: House):
         query = """
             INSERT INTO [House]
                 (source_name, source_id, url, image_url, title, city, house_type,
