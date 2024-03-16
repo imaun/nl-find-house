@@ -10,6 +10,7 @@ class Database:
         self._cursor = self._connection.cursor()
 
     def migrate_db(self):
+        print('Starting migrating the Db...')
         sql_source = """
             CREATE TABLE IF NOT EXISTS [Source]
             (
@@ -96,8 +97,10 @@ class Database:
             )
         """
         self._connection.execute(sql_outbox)
+        print('Database {} migrated successfully...'.format(self._dbName))
 
     def seed_sources(self):
+        print('[Db]-> Seeding sources...')
         file_path = 'data/sources.json'
         if not os.path.exists(file_path):
             raise FileNotFoundError('The source seed data at {} not found!'.format(file_path))
@@ -111,8 +114,10 @@ class Database:
 
         for source in sources:
             self.add_source(source)
+        print('[Db]-> Seeding sources completed.')
 
     def is_house_url_exists(self, url):
+        print('[Db]-> Checking if House url exist: {}'.format(url))
         query = 'SELECT COUNT(id) FROM [house] WHERE [url] = ?'
         count = int(self._cursor.execute(query, [url]).fetchone()[0])
         return count == 0
@@ -138,6 +143,7 @@ class Database:
         sources = []
         for row in data:
             sources.append(Source(*row))
+        print('[Db]-> Found {} source(s)!'.format(sources.count))
 
         return sources
 
@@ -156,3 +162,5 @@ class Database:
             house.price, house.status, house.create_date, house.rooms,
             house.area, house.interior, house.description])
         self._connection.commit()
+        print('[Db]->[House] added: source:{}, title:{}, url:{}'
+              .format(house.source_name, house.title, house.url))
