@@ -8,17 +8,16 @@ class Database:
         self._connection = sqlite3.connect(self._dbName)
         self._cursor = self._connection.cursor()
 
-
     def migrate_db(self):
         sql_source = """
             CREATE TABLE IF NOT EXISTS [Source]
             (
-                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                [Name] TEXT NOT NULL,
-                [City] TEXT NOT NULL,
-                [Url] TEXT NOT NULL,
-                [Status] INTEGER NOT NULL DEFAULT(1),
-                [Description] TEXT
+                [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+                [name] TEXT NOT NULL,
+                [city] TEXT NOT NULL,
+                [url] TEXT NOT NULL,
+                [status] INTEGER NOT NULL DEFAULT(1),
+                [description] TEXT
             )
         """
         self._connection.execute(sql_source)
@@ -26,23 +25,23 @@ class Database:
         sql_house = """
             CREATE TABLE IF NOT EXISTS [House]
             (
-                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                [SourceName] TEXT NOT NULL,
-                [SourceId] INTEGER NOT NULL,
-                [Url] TEXT NOT NULL,
-                [Image_Url] TEXT,
-                [Title] TEXT NOT NULL,
-                [City] TEXT,
-                [House_Type] TEXT NOT NULL,
-                [Price_Text] TEXT,
-                [Price] INTEGER NOT NULL DEFAULT(0),
-                [Status] INTEGER NOT NULL DEFAULT(0),
-                [Create_Date] DATETIME NOT NULL,
-                [Rooms] TEXT,
-                [Area] TEXT,
-                [Interior] TEXT,
-                [Description] TEXT,
-                FOREIGN KEY (SourceId) REFERENCES Source(Id)
+                [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+                [source_name] TEXT NOT NULL,
+                [source_id] INTEGER NOT NULL,
+                [url] TEXT NOT NULL,
+                [image_url] TEXT,
+                [title] TEXT NOT NULL,
+                [city] TEXT,
+                [house_type] TEXT NOT NULL,
+                [price_text] TEXT,
+                [price] INTEGER NOT NULL DEFAULT(0),
+                [status] INTEGER NOT NULL DEFAULT(0),
+                [create_date] DATETIME NOT NULL,
+                [rooms] TEXT,
+                [area] TEXT,
+                [interior] TEXT,
+                [description] TEXT,
+                FOREIGN KEY (source_id) REFERENCES Source(id)
             )
         """
         self._connection.execute(sql_house)
@@ -50,13 +49,14 @@ class Database:
         sql_user = """
             CREATE TABLE IF NOT EXISTS [User]
             (
-                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                [Username] TEXT NOT NULL,
-                [TelegramId] TEXT,
-                [Email] TEXT,
-                [Phone] TEXT,
-                [Create_Date] DATETIME NOT NULL,
-                [Status] INTEGER NOT NULL DEFAULT(0)
+                [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+                [username] TEXT NOT NULL,
+                [password] TEXT,
+                [telegramId] TEXT,
+                [email] TEXT,
+                [phone] TEXT,
+                [create_date] DATETIME NOT NULL,
+                [status] INTEGER NOT NULL DEFAULT(0)
             )
         """
         self._connection.execute(sql_user)
@@ -64,17 +64,17 @@ class Database:
         sql_channel = """
             CREATE TABLE IF NOT EXISTS [Channel]
             (
-                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                [Title] TEXT,
-                [ChannelId] TEXT NOT NULL,
-                [Price_Start] INTEGER NOT NULL DEFAULT(0),
-                [Price_End] INTEGER NOT NULL DEFAULT(0),
-                [House_Type] TEXT,
-                [Cities] TEXT,
-                [Status] INTEGER NOT NULL DEFAULT(0),
-                [Create_Date] DATETIME NOT NULL,
-                [UserId] INTEGER NOT NULL,
-                FOREIGN KEY (UserId) REFERENCES User(Id)
+                [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+                [title] TEXT,
+                [channel_id] TEXT NOT NULL,
+                [price_start] INTEGER NOT NULL DEFAULT(0),
+                [price_end] INTEGER NOT NULL DEFAULT(0),
+                [house_type] TEXT,
+                [city] TEXT,
+                [status] INTEGER NOT NULL DEFAULT(0),
+                [create_date] DATETIME NOT NULL,
+                [user_id] INTEGER NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES User(id)
             )
         """
         self._connection.execute(sql_channel)
@@ -82,53 +82,58 @@ class Database:
         sql_outbox = """
             CREATE TABLE IF NOT EXISTS [Outbox]
             (
-                [Id] INTEGER PRIMARY KEY AUTOINCREMENT,
-                [Create_Date] DATETIME NOT NULL,
-                [HouseId] INTEGER NOT NULL,
-                [UserId] INTEGER NOT NULL,
-                [ChannelId] INTEGER NOT NULL,
-                FOREIGN KEY (HouseId) REFERENCES House(Id),
-                FOREIGN KEY (UserId) REFERENCES User(Id),
-                FOREIGN KEY (ChannelId) REFERENCES Channel(Id)
+                [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+                [create_date] DATETIME NOT NULL,
+                [house_id] INTEGER NOT NULL,
+                [user_id] INTEGER NOT NULL,
+                [channel_id] INTEGER NOT NULL,
+                FOREIGN KEY (house_id) REFERENCES house(id),
+                FOREIGN KEY (user_id) REFERENCES User(id),
+                FOREIGN KEY (channel_id) REFERENCES Channel(id)
             )
         """
         self._connection.execute(sql_outbox)
 
     def is_house_url_exists(self, url):
-        query = 'SELECT COUNT(Id) FROM [House] WHERE [Url] = ?'
+        query = 'SELECT COUNT(id) FROM [house] WHERE [url] = ?'
         count = int(self._cursor.execute(query, [url]).fetchone()[0])
         return count == 0
 
+    def add_source(self, source: Source):
+        query = """
+            INSERT INTO [Source] 
+                ([name], [city], [url], [status], [description])
+            VALUES
+                (?, ?, ?, ? , ?)
+        """
+        self._cursor.execute(query, [
+            source.name, source.city, source.url, source.status, source.description
+        ])
+
+
+
     def get_source_by_name(self, name):
-        query = 'SELECT * FROM [Source] WHERE [Name] = ?'
+        query = 'SELECT * FROM [Source] WHERE [name] = ?'
         self._cursor.execute(query, [name])
-        data = self._cursor.fetchall()[0]
+        data = self._cursor.fetchone()
+        # if exists
+        if data: return Source(*data)
+        # try to create default source
         return Source(*data)
 
     def insert_house(self, house: House):
         query = """
             INSERT INTO [House]
-                (SourceName, SourceId, Url, ImageUrl, Title, City, House_Type,
-                    Price_Text, Price, Status, Create_Date, Rooms, Area, Interior,
-                    Description)
+                (source_name, source_id, url, image_url, title, city, house_type,
+                    price_text, price, status, create_date, rooms, area, interior,
+                    description)
             VALUES
                 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
         self._cursor.execute(query, [
-            house.source_name,
-            house.source_id,
-            house.url,
-            house.image_url,
-            house.title,
-            house.city,
-            house.house_type,
-            house.price_text,
-            house.price,
-            house.status,
-            house.create_date,
-            house.rooms,
-            house.area,
-            house.interior,
-            house.description
+            house.source_name, house.source_id, house.url, house.image_url,
+            house.title, house.city, house.house_type, house.price_text,
+            house.price, house.status, house.create_date, house.rooms,
+            house.area, house.interior, house.description
         ])
         self._connection.commit()

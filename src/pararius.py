@@ -5,7 +5,7 @@ from models import House
 
 
 class Pararius:
-    def __int__(self, url):
+    def __init__(self, url: str) -> object:
         self._sourceName = 'pararius'
         self._baseUrl = 'https://www.pararius.com'
         self._url = url
