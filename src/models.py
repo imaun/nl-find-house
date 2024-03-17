@@ -55,15 +55,16 @@ class User:
 
 
 class Channel:
-    def __init__(self, id, title, channel_id, price_start, price_end,
-                 house_type, cities, status, create_date, user_id):
+    def __init__(self, id: int = None, title: str = None, channel_id: str = None, price_start: int = None,
+                 price_end: int = None, house_type: str = None, city: str = None, status: int = 1,
+                 create_date: datetime = datetime.now(), user_id: int = None):
         self.id = id
         self.title = title
         self.channel_id = channel_id
         self.price_start = price_start
         self.price_end = price_end
         self.house_type = house_type
-        self.cities = cities
+        self.city = city
         self.status = status
         self.create_date = create_date
         self.user_id = user_id
