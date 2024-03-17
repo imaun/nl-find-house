@@ -15,7 +15,6 @@ class Pararius:
         self._paging_format: str = source.paging_format
         self._start_page_index: int = source.start_page_index
         self._page_index: int = source.start_page_index  # Pararius start page number
-        self._db = Database()
 
     def get_url(self):
         # Add / if baseUrl does not ends with it
@@ -32,41 +31,46 @@ class Pararius:
         search_result = html.find('ul', {"class": "search-list"})
         items = search_result.find_all("li", {"class": "search-list__item"})
         print(f'Found {len(items)} on "{self._sourceName}"... ')
-        for item in items:
-            e_title = item.find('h2', {"class": "listing-search-item__title"})
-            title = e_title.text.strip()
-            title_href = e_title.find('a').get('href')
-            item_url = self._baseUrl + title_href
 
-            print('[{}] found a new house: {}'.format(self._sourceName, item_url))
-            if self._db.is_house_url_exists(item_url):
-                print('Skipping the house with url: {} because already exists!'.format(item_url))
-                continue
+        with Database() as db:
+            for item in items:
+                e_title = item.find('h2', {"class": "listing-search-item__title"})
+                if e_title is None: continue
 
-            picture = item.find('img', {"class": "picture__image"}).get('src')
-            print('[{}] picture: {}'.format(self._sourceName, picture))
+                title = e_title.text.strip()
+                title_href = e_title.find('a').get('href')
+                item_url = self._baseUrl + title_href
 
-            address = item.find('div', {"class": "listing-search-item__sub-title'"}).text.strip()
-            print('[{}] address: {}'.format(self._sourceName, address))
+                print('[{}] found a new house: {}'.format(self._sourceName, item_url))
+                if db.is_house_url_exists(item_url):
+                    print('Skipping the house with url: {} because already exists!'.format(item_url))
+                    continue
 
-            price_text = item.find("div", {"class": "listing-search-item__price"}).text.strip()
-            price = int(price_text[1:].split(' ')[0].replace(',', ''))
-            print('[{}] price: {}'.format(self._sourceName, price))
+                picture = item.find('img', {"class": "picture__image"}).get('src')
+                print('[{}] picture: {}'.format(self._sourceName, picture))
 
-            area = item.find('li', {
-                "class": "illustrated-features__item illustrated-features__item--surface-area"}).text.strip()
-            print(area)
-            rooms = item.find('li', {
-                "class": "illustrated-features__item illustrated-features__item--number-of-rooms"}).text.strip()
-            print(rooms)
-            interior = item.find('li', {
-                "class": "illustrated-features__item illustrated-features__item--interior"}).text.strip()
-            print(interior)
+                address = item.find('div', {"class": "listing-search-item__sub-title'"}).text.strip()
+                print('[{}] address: {}'.format(self._sourceName, address))
 
-            self.add(item_url, title, picture, 'apartment',
-                     price_text, price, rooms, area, interior, None)
+                price_text = item.find("div", {"class": "listing-search-item__price"}).text.strip()
+                price = int(price_text[1:].split(' ')[0].replace(',', ''))
+                print('[{}] price: {}'.format(self._sourceName, price))
 
-    def add(self, url, title, image_url, house_type, price_text, price, rooms, area, interior, desc):
-        h = House(0, self._sourceName, self._source_id, url, image_url, title, self._city,
-                  house_type, price_text, price, 1, None, rooms, area, interior, desc)
-        self._db.add_house(h)
+                area_elm = item.find('li', {
+                    "class": "illustrated-features__item illustrated-features__item--surface-area"})
+                area = area_elm.text.strip() if area_elm is not None else None
+                print(area)
+
+                rooms_elm = item.find('li', {
+                    "class": "illustrated-features__item illustrated-features__item--number-of-rooms"})
+                rooms = rooms_elm.text.strip() if rooms_elm is not None else None
+                print(rooms)
+
+                interior_elm = item.find('li', {
+                    "class": "illustrated-features__item illustrated-features__item--interior"})
+                interior = interior_elm.text.strip() if interior_elm is not None else None
+
+                h = House(0, self._sourceName, self._source_id, url, picture, title, self._city,
+                          'apartment', price_text, price, 1, None, rooms, area, interior, None)
+
+                db.add_house(h)

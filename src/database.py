@@ -11,6 +11,12 @@ class Database:
         self._connection = sqlite3.connect(self._dbName)
         self._cursor = self._connection.cursor()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._connection.close()
+
     def migrate_db(self):
         print('Starting migrating the Db...')
         sql_source = """
@@ -123,7 +129,7 @@ class Database:
         print('[Db]-> Checking if House url exist: {}'.format(url))
         query = 'SELECT COUNT(id) FROM [house] WHERE [url] = ?'
         count = int(self._cursor.execute(query, [url]).fetchone()[0])
-        return count == 0
+        return count > 0
 
     def add_source(self, source: Source):
         query = """
