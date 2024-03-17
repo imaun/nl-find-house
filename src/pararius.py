@@ -9,6 +9,7 @@ class Pararius:
     def __init__(self, source: Source) -> object:
         self._sourceName: str = 'pararius'
         self._source_id: int = source.id
+        self._city: str = source.city
         self._baseUrl: str = source.base_url
         self._page_url: str = source.page_url
         self._paging_format: str = source.paging_format
@@ -18,7 +19,7 @@ class Pararius:
 
     def get_url(self):
         # Add / if baseUrl does not ends with it
-        url: str = self._baseUrl.rstrip('/') + '/' + self._page_url
+        url: str = self._baseUrl.rstrip('/') + '/' + self._page_url.lstrip('/')
         if self._page_index == self._start_page_index:
             return url
         return url + self._paging_format.replace('%', str(self._page_index))
@@ -26,14 +27,14 @@ class Pararius:
     def crawl(self):
         url = self.get_url()
         page = requests.get(url)
+        print(url)
         html = BeautifulSoup(page.content, 'html.parser')
         search_result = html.find('ul', {"class": "search-list"})
         items = search_result.find_all("li", {"class": "search-list__item"})
         print(f'Found {len(items)} on "{self._sourceName}"... ')
         for item in items:
-            h = House()
             e_title = item.find('h2', {"class": "listing-search-item__title"})
-            h.title = e_title.text.strip()
+            title = e_title.text.strip()
             title_href = e_title.find('a').get('href')
             item_url = self._baseUrl + title_href
 
@@ -62,20 +63,10 @@ class Pararius:
                 "class": "illustrated-features__item illustrated-features__item--interior"}).text.strip()
             print(interior)
 
-    def add(self, url, title, image_url, city, house_type,
-            price_text, price, rooms, area, interior, desc):
-        h = House()
-        h.title = title
-        h.source_name = self._sourceName
-        h.source_id = self._source_id
-        h.url = url
-        h.image_url = image_url
-        h.city = city
-        h.house_type = house_type
-        h.price_text = price_text
-        h.price = price
-        h.rooms = rooms
-        h.area = area
-        h.interior = interior
-        h.description = desc
+            self.add(item_url, title, picture, 'apartment',
+                     price_text, price, rooms, area, interior, None)
+
+    def add(self, url, title, image_url, house_type, price_text, price, rooms, area, interior, desc):
+        h = House(0, self._sourceName, self._source_id, url, image_url, title, self._city,
+                  house_type, price_text, price, 1, None, rooms, area, interior, desc)
         self._db.add_house(h)

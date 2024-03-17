@@ -1,8 +1,11 @@
-class House:
-    def __init__(self, id, source_name, source_id, url, image_url,
-                title, city, house_type, price_text, price,
-                status, create_date, rooms, area, interior, description):
+from datetime import datetime
 
+
+class House:
+    def __init__(self, id: int = None, source_name: str = None, source_id: int = None, url: str = None,
+                 image_url: str = None, title: str = None, city: str = None, house_type: str = None,
+                 price_text: str = None, price: int = None, status: int = None, create_date: datetime = None,
+                 rooms: str = None, area: str = None, interior: str = None, description: str = None):
         self.id = id
         self.source_name = source_name
         self.source_id = source_id
@@ -14,6 +17,8 @@ class House:
         self.price_text = price_text
         self.price = price
         self.status = status
+        if create_date is None:
+            create_date = datetime.now()
         self.create_date = create_date
         self.rooms = rooms
         self.area = area
@@ -23,8 +28,7 @@ class House:
 
 class Source:
     def __init__(self, id: int, name: str, city: str, base_url: str, page_url: str,
-                paging_format: str, start_page_index: int, status: int, description: str):
-
+                 paging_format: str, start_page_index: int, status: int, description: str):
         self.id = id
         self.name = name
         self.city = city
@@ -34,7 +38,6 @@ class Source:
         self.start_page_index = start_page_index
         self.status = status
         self.description = description
-
 
 
 class User:
@@ -50,7 +53,7 @@ class User:
 
 class Channel:
     def __init__(self, id, title, channel_id, price_start, price_end,
-                house_type, cities, status, create_date, user_id):
+                 house_type, cities, status, create_date, user_id):
         self.id = id
         self.title = title
         self.channel_id = channel_id
