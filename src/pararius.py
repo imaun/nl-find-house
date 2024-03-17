@@ -15,6 +15,7 @@ class Pararius:
         self._paging_format: str = source.paging_format
         self._start_page_index: int = source.start_page_index
         self._page_index: int = source.start_page_index  # Pararius start page number
+        self._limit_page_index: int = source.limit_page_index
 
     def get_url(self):
         # Add / if baseUrl does not ends with it
@@ -24,53 +25,55 @@ class Pararius:
         return url + self._paging_format.replace('%', str(self._page_index))
 
     def crawl(self):
-        url = self.get_url()
-        page = requests.get(url)
-        print(url)
-        html = BeautifulSoup(page.content, 'html.parser')
-        search_result = html.find('ul', {"class": "search-list"})
-        items = search_result.find_all("li", {"class": "search-list__item"})
-        print(f'Found {len(items)} on "{self._sourceName}"... ')
+        for pageNo in range(self._start_page_index, self._limit_page_index):
 
-        with Database() as db:
-            for item in items:
-                e_title = item.find('h2', {"class": "listing-search-item__title"})
-                if e_title is None: continue
+            url = self.get_url()
+            page = requests.get(url)
+            print(url)
+            html = BeautifulSoup(page.content, 'html.parser')
+            search_result = html.find('ul', {"class": "search-list"})
+            items = search_result.find_all("li", {"class": "search-list__item"})
+            print(f'Found {len(items)} on "{self._sourceName}"... ')
 
-                title = e_title.text.strip()
-                title_href = e_title.find('a').get('href')
-                item_url = self._baseUrl + title_href
+            with Database() as db:
+                for item in items:
+                    e_title = item.find('h2', {"class": "listing-search-item__title"})
+                    if e_title is None: continue
 
-                print('[{}] found a new house: {}'.format(self._sourceName, item_url))
-                if db.is_house_url_exists(item_url):
-                    print('Skipping the house with url: {} because already exists!'.format(item_url))
-                    continue
+                    title = e_title.text.strip()
+                    title_href = e_title.find('a').get('href')
+                    item_url = self._baseUrl + title_href
 
-                picture = item.find('img', {"class": "picture__image"}).get('src')
-                print('[{}] picture: {}'.format(self._sourceName, picture))
+                    print('[{}] found a new house: {}'.format(self._sourceName, item_url))
+                    if db.is_house_url_exists(item_url):
+                        print('Skipping the house with url: {} because already exists!'.format(item_url))
+                        continue
 
-                address = item.find('div', {"class": "listing-search-item__sub-title'"}).text.strip()
-                print('[{}] address: {}'.format(self._sourceName, address))
+                    picture = item.find('img', {"class": "picture__image"}).get('src')
+                    print('[{}] picture: {}'.format(self._sourceName, picture))
 
-                price_text = item.find("div", {"class": "listing-search-item__price"}).text.strip()
-                price = int(price_text[1:].split(' ')[0].replace(',', ''))
-                print('[{}] price: {}'.format(self._sourceName, price))
+                    address = item.find('div', {"class": "listing-search-item__sub-title'"}).text.strip()
+                    print('[{}] address: {}'.format(self._sourceName, address))
 
-                area_elm = item.find('li', {
-                    "class": "illustrated-features__item illustrated-features__item--surface-area"})
-                area = area_elm.text.strip() if area_elm is not None else None
-                print(area)
+                    price_text = item.find("div", {"class": "listing-search-item__price"}).text.strip()
+                    price = int(price_text[1:].split(' ')[0].replace(',', ''))
+                    print('[{}] price: {}'.format(self._sourceName, price))
 
-                rooms_elm = item.find('li', {
-                    "class": "illustrated-features__item illustrated-features__item--number-of-rooms"})
-                rooms = rooms_elm.text.strip() if rooms_elm is not None else None
-                print(rooms)
+                    area_elm = item.find('li', {
+                        "class": "illustrated-features__item illustrated-features__item--surface-area"})
+                    area = area_elm.text.strip() if area_elm is not None else None
+                    print(area)
 
-                interior_elm = item.find('li', {
-                    "class": "illustrated-features__item illustrated-features__item--interior"})
-                interior = interior_elm.text.strip() if interior_elm is not None else None
+                    rooms_elm = item.find('li', {
+                        "class": "illustrated-features__item illustrated-features__item--number-of-rooms"})
+                    rooms = rooms_elm.text.strip() if rooms_elm is not None else None
+                    print(rooms)
 
-                h = House(0, self._sourceName, self._source_id, url, picture, title, self._city,
-                          'apartment', price_text, price, 1, None, rooms, area, interior, None)
+                    interior_elm = item.find('li', {
+                        "class": "illustrated-features__item illustrated-features__item--interior"})
+                    interior = interior_elm.text.strip() if interior_elm is not None else None
 
-                db.add_house(h)
+                    h = House(0, self._sourceName, self._source_id, url, picture, title, self._city,
+                              'apartment', price_text, price, 1, None, rooms, area, interior, None)
+
+                    db.add_house(h)
