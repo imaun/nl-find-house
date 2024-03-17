@@ -4,7 +4,7 @@ from datetime import datetime
 class House:
     def __init__(self, id: int = None, source_name: str = None, source_id: int = None, url: str = None,
                  image_url: str = None, title: str = None, city: str = None, house_type: str = None,
-                 price_text: str = None, price: int = None, status: int = None, create_date: datetime = None,
+                 price_text: str = None, price: int = None, status: int = 1, create_date: datetime = datetime.now(),
                  rooms: str = None, area: str = None, interior: str = None, description: str = None):
         self.id = id
         self.source_name = source_name
@@ -17,8 +17,6 @@ class House:
         self.price_text = price_text
         self.price = price
         self.status = status
-        if create_date is None:
-            create_date = datetime.now()
         self.create_date = create_date
         self.rooms = rooms
         self.area = area
@@ -29,7 +27,7 @@ class House:
 class Source:
     def __init__(self, id: int = None, name: str = None, city: str = None, base_url: str = None,
                  page_url: str = None, paging_format: str = None, start_page_index: int = None,
-                 limit_page_index: int = None, status: int = None, create_date: datetime = None,
+                 limit_page_index: int = None, status: int = 1, create_date: datetime = datetime.now(),
                  description: str = None):
         self.id = id
         self.name = name
@@ -40,13 +38,13 @@ class Source:
         self.start_page_index = start_page_index
         self.limit_page_index = limit_page_index
         self.status = status
-        if create_date is None:
-            self.create_date = datetime.now()
+        self.create_date = create_date
         self.description = description
 
 
 class User:
-    def __init__(self, id, username, telegram_id, email, phone, status, create_date):
+    def __init__(self, id: int = None, username: str = None, telegram_id: str = None,
+                 email: str = None, phone: str = None, status: int = 1, create_date: datetime = datetime.now()):
         self.id = id
         self.username = username
         self.telegram_id = telegram_id
