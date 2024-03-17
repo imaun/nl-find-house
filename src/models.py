@@ -71,7 +71,8 @@ class Channel:
 
 
 class OutboxMessage:
-    def __init__(self, id, house_id, user_id, channel_id, create_date):
+    def __init__(self, id: int = None, house_id: int = None, user_id: int = None,
+                 channel_id: str = None, create_date: datetime = datetime.now()):
         self.id = id
         self.house_id = house_id
         self.user_id = user_id
