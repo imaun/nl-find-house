@@ -29,7 +29,9 @@ class Database:
                 [page_url] TEXT NOT NULL,
                 [paging_format] TEXT,
                 [start_page_index] INT NOT NULL DEFAULT(0),
+                [limit_page_index] INT,
                 [status] INTEGER NOT NULL DEFAULT(1),
+                [create_date] DATETIME NOT NULL,
                 [description] TEXT
             )
         """

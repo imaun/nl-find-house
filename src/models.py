@@ -27,8 +27,10 @@ class House:
 
 
 class Source:
-    def __init__(self, id: int, name: str, city: str, base_url: str, page_url: str,
-                 paging_format: str, start_page_index: int, status: int, description: str):
+    def __init__(self, id: int = None, name: str = None, city: str = None, base_url: str = None,
+                 page_url: str = None, paging_format: str = None, start_page_index: int = None,
+                 limit_page_index: int = None, status: int = None, create_date: datetime = None,
+                 description: str = None):
         self.id = id
         self.name = name
         self.city = city
@@ -36,7 +38,10 @@ class Source:
         self.page_url = page_url
         self.paging_format = paging_format
         self.start_page_index = start_page_index
+        self.limit_page_index = limit_page_index
         self.status = status
+        if create_date is None:
+            self.create_date = datetime.now()
         self.description = description
 
 
