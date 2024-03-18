@@ -54,13 +54,15 @@ class User:
         self.create_date = create_date
 
 
+# Channels can be Telegram channels or EmailAccounts
 class Channel:
-    def __init__(self, id: int = None, title: str = None, channel_id: str = None, price_start: int = None,
-                 price_end: int = None, house_type: str = None, city: str = None, status: int = 1,
-                 create_date: datetime = datetime.now(), user_id: int = None):
+    def __init__(self, id: int = None, title: str = None, channel_id: str = None, channel_type: str = None,
+                 price_start: int = None, price_end: int = None, house_type: str = None, city: str = None,
+                 status: int = 1, create_date: datetime = datetime.now(), user_id: int = None):
         self.id = id
         self.title = title
         self.channel_id = channel_id
+        self.channel_type = channel_type
         self.price_start = price_start
         self.price_end = price_end
         self.house_type = house_type

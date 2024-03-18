@@ -2,7 +2,7 @@ import json
 import os
 import sqlite3
 
-from models import Source, House
+from models import Source, House, OutboxMessage, User, Channel
 
 
 class Database:
@@ -82,6 +82,7 @@ class Database:
                 [id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [title] TEXT,
                 [channel_id] TEXT NOT NULL,
+                [channel_type] TEXT NOT NULL,
                 [price_start] INTEGER NOT NULL DEFAULT(0),
                 [price_end] INTEGER NOT NULL DEFAULT(0),
                 [house_type] TEXT,
