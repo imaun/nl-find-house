@@ -158,6 +158,15 @@ class Database:
 
         return sources
 
+    def get_source(self, name: str, page_url: str):
+        query = 'SELECT * FROM [Source] WHERE [name] = ? AND [page_url] = ?'
+        self._cursor.execute(query, [name, page_url])
+        data = self._cursor.fetchone()
+
+        if data:
+            return Source(*data)
+        return None
+
     def add_house(self, house: House):
         query = """
             INSERT INTO [House]
