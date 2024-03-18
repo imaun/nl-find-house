@@ -11,6 +11,12 @@ class Database:
         self._connection = sqlite3.connect(self._dbName)
         self._cursor = self._connection.cursor()
 
+    __SOURCE = 'Source'
+    __HOUSE = 'House'
+    __USER = 'User'
+    __CHANNEL = 'Channel'
+    __OUTBOX = 'Outbox'
+
     def __enter__(self):
         return self
 
@@ -20,7 +26,7 @@ class Database:
     def migrate_db(self):
         print('Starting migrating the Db...')
         sql_source = """
-            CREATE TABLE IF NOT EXISTS [Source]
+            CREATE TABLE IF NOT EXISTS [{}]
             (
                 [id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [name] TEXT NOT NULL,
@@ -34,11 +40,11 @@ class Database:
                 [create_date] DATETIME NOT NULL,
                 [description] TEXT
             )
-        """
+        """.format(Database.__SOURCE)
         self._connection.execute(sql_source)
 
         sql_house = """
-            CREATE TABLE IF NOT EXISTS [House]
+            CREATE TABLE IF NOT EXISTS [{}]
             (
                 [id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [source_name] TEXT NOT NULL,
@@ -58,11 +64,11 @@ class Database:
                 [description] TEXT,
                 FOREIGN KEY (source_id) REFERENCES Source(id)
             )
-        """
+        """.format(Database.__HOUSE)
         self._connection.execute(sql_house)
 
         sql_user = """
-            CREATE TABLE IF NOT EXISTS [User]
+            CREATE TABLE IF NOT EXISTS [{}]
             (
                 [id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [username] TEXT NOT NULL,
@@ -73,11 +79,11 @@ class Database:
                 [create_date] DATETIME NOT NULL,
                 [status] INTEGER NOT NULL DEFAULT(0)
             )
-        """
+        """.format(Database.__USER)
         self._connection.execute(sql_user)
 
         sql_channel = """
-            CREATE TABLE IF NOT EXISTS [Channel]
+            CREATE TABLE IF NOT EXISTS [{}]
             (
                 [id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [title] TEXT,
@@ -92,11 +98,11 @@ class Database:
                 [user_id] INTEGER NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES User(id)
             )
-        """
+        """.format(Database.__CHANNEL)
         self._connection.execute(sql_channel)
 
         sql_outbox = """
-            CREATE TABLE IF NOT EXISTS [Outbox]
+            CREATE TABLE IF NOT EXISTS [{}]
             (
                 [id] INTEGER PRIMARY KEY AUTOINCREMENT,
                 [create_date] DATETIME NOT NULL,
@@ -107,7 +113,7 @@ class Database:
                 FOREIGN KEY (user_id) REFERENCES User(id),
                 FOREIGN KEY (channel_id) REFERENCES Channel(id)
             )
-        """
+        """.format(Database.__OUTBOX)
         self._connection.execute(sql_outbox)
         print('Database {} migrated successfully...'.format(self._dbName))
 
@@ -136,11 +142,11 @@ class Database:
 
     def add_source(self, source: Source):
         query = """
-            INSERT INTO [Source] 
+            INSERT INTO [{}}] 
                 ([name], [city], [base_url], [page_url], [paging_format], [start_page_index], [status], [description])
             VALUES
                 (?, ?, ?, ? , ?, ?, ?, ?)
-        """
+        """.format(Database.__SOURCE)
         self._cursor.execute(query, [
             source.name, source.city, source.base_url, source.page_url,
             source.paging_format, source.start_page_index, source.status, source.description])
@@ -165,19 +171,21 @@ class Database:
         data = self._cursor.fetchone()
 
         if data:
-            return Source(*data)
+            result = Source(*data)
+            print('[Db]-> Found {} source').format(result.name)
+            return result
         return None
 
     def add_house(self, house: House):
-        query = """
-            INSERT INTO [House]
+        command = """
+            INSERT INTO [{}]
                 (source_name, source_id, url, image_url, title, city, house_type,
                     price_text, price, status, create_date, rooms, area, interior,
                     description)
             VALUES
                 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """
-        self._cursor.execute(query, [
+        """.format(Database.__HOUSE)
+        self._cursor.execute(command, [
             house.source_name, house.source_id, house.url, house.image_url,
             house.title, house.city, house.house_type, house.price_text,
             house.price, house.status, house.create_date, house.rooms,
@@ -185,3 +193,17 @@ class Database:
         self._connection.commit()
         print('[Db]->[House] added: source:{}, title:{}, url:{}'
               .format(house.source_name, house.title, house.url))
+
+    def add_message(self, message: OutboxMessage):
+        command = """
+            INSERT INTO [{}]
+                [house_id], [user_id], [channel_id], [create_date]
+            VALUES
+                ?, ?, ?, ?
+        """.format(Database.__OUTBOX)
+        self._cursor.execute(command, [
+            message.house_id, message.user_id, message.channel_id, message.create_date
+        ])
+        self._connection.commit()
+        print('[Db]->[Outbox] added: user:{} channel:{}'
+              .format(message.user_id, message.channel_id))
