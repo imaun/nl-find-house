@@ -207,3 +207,18 @@ class Database:
         self._connection.commit()
         print('[Db]->[Outbox] added: user:{} channel:{}'
               .format(message.user_id, message.channel_id))
+
+    def add_user(self, user: User):
+        command = """
+            INSERT INTO [{}]
+                [username], [telegram_id], [email], [phone], [status], [create_date]
+            VALUES
+                ?, ?, ?, ?, ?, ?
+        """.format(Database.__USER)
+        self._cursor.execute(command, [
+            user.username, user.telegram_id, user.email, user.phone, user.status, user.create_date
+        ])
+        self._connection.commit()
+        print('[Db]->[User] added: username:{}').format(user.username)w
+
+        
