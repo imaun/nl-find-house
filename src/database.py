@@ -219,6 +219,6 @@ class Database:
             user.username, user.telegram_id, user.email, user.phone, user.status, user.create_date
         ])
         self._connection.commit()
-        print('[Db]->[User] added: username:{}').format(user.username)w
+        print('[Db]->[User] added: username:{}').format(user.username)
 
         
