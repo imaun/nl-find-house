@@ -224,9 +224,17 @@ class Database:
     def get_user_by_id(self, id: int):
         query = """
             SELECT * FROM [{}] WHERE [id] = ?
-        """
+        """.format(Database.__USER)
         self._cursor.execute(query, [id])
         data = self._cursor.fetchone()
+        if not data: return None
         return User(*data)
 
-
+    def get_user_by_username(self, username: str):
+        query = """
+            SELECT * FROM [{}] WHERE [username] = ?
+        """.format(Database.__USER)
+        self._cursor.execute(query, [username])
+        data = self._cursor.fetchone()
+        if not data: return None
+        return User(*data)
