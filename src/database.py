@@ -221,4 +221,12 @@ class Database:
         self._connection.commit()
         print('[Db]->[User] added: username:{}').format(user.username)
 
-        
+    def get_user_by_id(self, id: int):
+        query = """
+            SELECT * FROM [{}] WHERE [id] = ?
+        """
+        self._cursor.execute(query, [id])
+        data = self._cursor.fetchone()
+        return User(*data)
+
+
