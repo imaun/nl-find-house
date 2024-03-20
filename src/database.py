@@ -238,3 +238,12 @@ class Database:
         data = self._cursor.fetchone()
         if not data: return None
         return User(*data)
+
+    def get_user_by_telegram_id(self, telegram_id: str):
+        query = """
+            SELECT * FROM [{}] WHERE [telegram_id] = ?
+        """.format(Database.__USER)
+        self._cursor.execute(query, [telegram_id])
+        data = self._cursor.fetchone()
+        if not data: return None
+        return User(*data)
