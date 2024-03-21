@@ -25,8 +25,6 @@ class Pararius:
         return url + self._paging_format.replace('%', str(self._page_index))
 
     def crawl(self):
-        print(self._start_page_index)
-        print(self._limit_page_index)
         for pageNo in range(self._start_page_index, self._limit_page_index):
 
             url = self.get_url()
