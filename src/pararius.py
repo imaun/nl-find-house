@@ -1,4 +1,4 @@
-import requests
+from selenium import webdriver
 from bs4 import BeautifulSoup
 from database import Database
 from models import House
@@ -16,6 +16,8 @@ class Pararius:
         self._start_page_index: int = source.start_page_index
         self._page_index: int = source.start_page_index  # Pararius start page number
         self._limit_page_index: int = source.limit_page_index
+        # Set up the web browser
+        self._browser = webdriver.Chrome()
 
     def get_url(self):
         # Add / if baseUrl does not ends with it
@@ -28,10 +30,13 @@ class Pararius:
         for pageNo in range(self._start_page_index, self._limit_page_index):
 
             url = self.get_url()
-            page = requests.get(url)
+            self._browser.get(url)
+            page_source = self._browser.page_source
             print(url)
-            html = BeautifulSoup(page.content, 'html.parser')
+            html = BeautifulSoup(page_source, 'html.parser')
+            # print(html)
             search_result = html.find('ul', {"class": "search-list"})
+            print(search_result)
             items = search_result.find_all("li", {"class": "search-list__item"})
             print(f'Found {len(items)} on "{self._sourceName}"... ')
 
@@ -84,3 +89,5 @@ class Pararius:
                     except Exception as err:
                         print('[{}] Error: {}'.format(self._sourceName, err))
                         continue
+
+        self._browser.quit()
