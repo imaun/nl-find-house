@@ -38,7 +38,10 @@ class Pararius:
             with Database() as db:
                 for item in items:
                     e_title = item.find('h2', {"class": "listing-search-item__title"})
-                    if e_title is None: continue
+                    # if we can't find any title matching this element,
+                    # it means it's an ad or not what we're looking for!
+                    if e_title is None:
+                        continue
 
                     title = e_title.text.strip()
                     title_href = e_title.find('a').get('href')
