@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 from database import Database
 from models import House
@@ -17,7 +18,12 @@ class Pararius:
         self._page_index: int = source.start_page_index  # Pararius start page number
         self._limit_page_index: int = source.limit_page_index
         # Set up the web browser
-        self._browser = webdriver.Chrome()
+        browser_options = Options()
+        browser_options.add_argument('--headless')
+        browser_options.add_argument('--start-maximized')
+        browser_options.add_argument('--disable-extensions')
+        browser_options.add_argument('--no-sandbox') # for linux only
+        self._browser = webdriver.Chrome(options=browser_options)
 
     def get_url(self):
         # Add / if baseUrl does not ends with it
