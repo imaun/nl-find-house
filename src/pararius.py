@@ -20,10 +20,11 @@ class Pararius:
         self._limit_page_index: int = source.limit_page_index
         # Set up the web browser
         browser_options = Options()
-        browser_options.add_argument('--headless')
-        browser_options.add_argument('--start-maximized')
+        # browser_options.add_argument('--headless')
+        # browser_options.add_argument('--start-maximized')
         browser_options.add_argument('--disable-extensions')
-        browser_options.add_argument('--no-sandbox')  # for linux only
+        browser_options.add_argument("--enable-javascript")
+        # browser_options.add_argument('--no-sandbox')  # for linux only
         self._browser = webdriver.Chrome(options=browser_options)
 
     def get_url(self):

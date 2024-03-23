@@ -163,7 +163,7 @@ class Database:
         sources = []
         for row in data:
             sources.append(Source(*row))
-        print('[Db]-> Found {} source(s)!'.format(sources.count))
+        print('[Db]-> Found {} source(s)!'.format(sources.__len__()))
 
         return sources
 
