@@ -1,3 +1,4 @@
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
@@ -22,7 +23,7 @@ class Pararius:
         browser_options.add_argument('--headless')
         browser_options.add_argument('--start-maximized')
         browser_options.add_argument('--disable-extensions')
-        browser_options.add_argument('--no-sandbox') # for linux only
+        browser_options.add_argument('--no-sandbox')  # for linux only
         self._browser = webdriver.Chrome(options=browser_options)
 
     def get_url(self):
@@ -88,8 +89,9 @@ class Pararius:
                             "class": "illustrated-features__item illustrated-features__item--interior"})
                         interior = interior_elm.text.strip() if interior_elm is not None else None
 
-                        h = House(0, self._sourceName, self._source_id, url, picture, title, self._city,
-                                  'apartment', price_text, price, 1, None, rooms, area, interior, None)
+                        h = House(0, self._sourceName, self._source_id, item_url, picture, title, self._city,
+                                  'apartment', price_text, price, 1, datetime.now(), rooms, area, interior,
+                                  None)
 
                         db.add_house(h)
                     except Exception as err:

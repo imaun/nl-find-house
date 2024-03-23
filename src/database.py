@@ -174,7 +174,7 @@ class Database:
 
         if data:
             result = Source(*data)
-            print('[Db]-> Found {} source').format(result.name)
+            print('[Db]-> Found "{}" source').format(result.name)
             return result
         return None
 
