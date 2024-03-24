@@ -35,20 +35,20 @@ class Pararius:
         return url + self._paging_format.replace('%', str(self._page_index))
 
     def crawl(self):
-        for pageNo in range(self._start_page_index, self._limit_page_index):
+        with Database() as db:
+            for pageNo in range(self._start_page_index, self._limit_page_index):
 
-            url = self.get_url()
-            self._browser.get(url)
-            page_source = self._browser.page_source
-            print(url)
-            html = BeautifulSoup(page_source, 'html.parser')
-            # print(html)
-            search_result = html.find('ul', {"class": "search-list"})
-            print(search_result)
-            items = search_result.find_all("li", {"class": "search-list__item"})
-            print(f'Found {len(items)} on "{self._sourceName}"... ')
+                url = self.get_url()
+                self._browser.get(url)
+                page_source = self._browser.page_source
+                print(url)
+                html = BeautifulSoup(page_source, 'html.parser')
+                # print(html)
+                search_result = html.find('ul', {"class": "search-list"})
+                print(search_result)
+                items = search_result.find_all("li", {"class": "search-list__item"})
+                print(f'Found {len(items)} on "{self._sourceName}"... ')
 
-            with Database() as db:
                 for item in items:
                     try:
                         e_title = item.find('h2', {"class": "listing-search-item__title"})
