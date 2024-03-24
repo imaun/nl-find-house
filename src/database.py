@@ -186,15 +186,18 @@ class Database:
             INSERT INTO [{}]
                 (source_name, source_id, url, image_url, title, city, house_type,
                     price_text, price, status, create_date, rooms, area, interior,
-                    description)
+                    postal_code, available_from, offered_from, description)
             VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """.format(Database.__HOUSE)
+
         self._cursor.execute(command, [
             house.source_name, house.source_id, house.url, house.image_url,
             house.title, house.city, house.house_type, house.price_text,
             house.price, house.status, house.create_date, house.rooms,
-            house.area, house.interior, house.description])
+            house.area, house.interior, house.postal_code, house.available_from,
+            house.offered_from, house.description])
+
         self._connection.commit()
         print('[Db]->[House] added: source:{}, title:{}, url:{}'
               .format(house.source_name, house.title, house.url))
