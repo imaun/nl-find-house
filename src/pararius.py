@@ -92,7 +92,7 @@ class Pararius:
 
                         h = House(0, self._sourceName, self._source_id, item_url, picture, title, self._city,
                                   'apartment', price_text, price, 1, datetime.now(), rooms, area, interior,
-                                  None)
+                                  None, None, None, None)
 
                         db.add_house(h)
                     except Exception as err:
