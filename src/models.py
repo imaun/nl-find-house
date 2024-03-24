@@ -5,7 +5,8 @@ class House:
     def __init__(self, id: int = None, source_name: str = None, source_id: int = None, url: str = None,
                  image_url: str = None, title: str = None, city: str = None, house_type: str = None,
                  price_text: str = None, price: int = None, status: int = 1, create_date: datetime = datetime.now(),
-                 rooms: str = None, area: str = None, interior: str = None, description: str = None):
+                 rooms: str = None, area: str = None, interior: str = None, postal_code: str = None,
+                 available_from: str = None, offered_from: str = None, description: str = None):
         self.id = id
         self.source_name = source_name
         self.source_id = source_id
@@ -21,6 +22,9 @@ class House:
         self.rooms = rooms
         self.area = area
         self.interior = interior
+        self.postal_code = postal_code
+        self.available_from = available_from
+        self.offered_from = offered_from
         self.description = description
 
 
