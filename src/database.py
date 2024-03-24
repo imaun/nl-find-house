@@ -61,6 +61,9 @@ class Database:
                 [rooms] TEXT,
                 [area] TEXT,
                 [interior] TEXT,
+                [postal_code] TEXT,
+                [available_from] TEXT,
+                [offered_form] TEXT,
                 [description] TEXT,
                 FOREIGN KEY (source_id) REFERENCES Source(id)
             )
