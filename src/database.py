@@ -148,15 +148,17 @@ class Database:
     def add_source(self, source: Source):
         query = """
             INSERT INTO [{}] 
-                ([name], [city], [base_url], [page_url], [paging_format], 
-                    [start_page_index], [limit_page_index], [status], [create_date], [description])
+                ([name], [city], [base_url], [page_url], [paging_format], [status]
+                    [start_page_index], [limit_page_index], [status], [create_date], 
+                    [description])
             VALUES
-                (?, ?, ?, ? , ?, ?, ?, ?, ?, ?)
+                (?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?)
         """.format(Database.__SOURCE)
         self._cursor.execute(query, [
             source.name, source.city, source.base_url, source.page_url,
-            source.paging_format, source.start_page_index, source.limit_page_index,
-            source.status, source.create_date, source.description])
+            source.paging_format, source.status, source.start_page_index,
+            source.limit_page_index, source.status, source.create_date,
+            source.description])
         print('[Db]->[Source] added: name:{} baseUrl:{}, page_url:{}'
               .format(source.name, source.base_url, source.page_url))
 
