@@ -38,7 +38,9 @@ class Database:
                 [limit_page_index] INT,
                 [status] INTEGER NOT NULL DEFAULT(1),
                 [create_date] DATETIME NOT NULL,
-                [description] TEXT
+                [description] TEXT,
+                [status] INT NOT NULL DEFAULT(1),
+                [last_visited] DATETIME
             )
         """.format(Database.__SOURCE)
         self._connection.execute(sql_source)
