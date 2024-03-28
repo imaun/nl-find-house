@@ -32,7 +32,7 @@ class Source:
     def __init__(self, id: int = None, name: str = None, city: str = None, base_url: str = None,
                  page_url: str = None, paging_format: str = None, start_page_index: int = None,
                  limit_page_index: int = None, status: int = 1, create_date: datetime = datetime.now(),
-                 description: str = None):
+                 description: str = None, last_visited: datetime = None):
         self.id = id
         self.name = name
         self.city = city
@@ -44,6 +44,7 @@ class Source:
         self.status = status
         self.create_date = create_date
         self.description = description
+        self.last_visited = last_visited
 
 
 class User:
