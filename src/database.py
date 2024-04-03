@@ -36,7 +36,6 @@ class Database:
                 [paging_format] TEXT,
                 [start_page_index] INT NOT NULL DEFAULT(0),
                 [limit_page_index] INT,
-                [status] INTEGER NOT NULL DEFAULT(1),
                 [create_date] DATETIME NOT NULL,
                 [description] TEXT,
                 [status] INT NOT NULL DEFAULT(1),
@@ -65,7 +64,7 @@ class Database:
                 [interior] TEXT,
                 [postal_code] TEXT,
                 [available_from] TEXT,
-                [offered_form] TEXT,
+                [offered_from] TEXT,
                 [description] TEXT,
                 FOREIGN KEY (source_id) REFERENCES Source(id)
             )
@@ -148,7 +147,7 @@ class Database:
     def add_source(self, source: Source):
         query = """
             INSERT INTO [{}] 
-                ([name], [city], [base_url], [page_url], [paging_format], [status]
+                ([name], [city], [base_url], [page_url], [paging_format], [status],
                     [start_page_index], [limit_page_index], [status], [create_date], 
                     [description])
             VALUES
