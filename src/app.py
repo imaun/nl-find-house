@@ -18,5 +18,3 @@ for src in sources:
 print('Finished!')
 print('Exiting...')
 
-print("iman salam")
-
