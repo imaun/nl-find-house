@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -38,12 +39,13 @@ class Pararius:
         with Database() as db:
             for pageNo in range(self._start_page_index, self._limit_page_index):
 
+                time.sleep(1)
                 url = self.get_url()
                 self._browser.get(url)
                 page_source = self._browser.page_source
                 print(url)
                 html = BeautifulSoup(page_source, 'html.parser')
-                # print(html)
+                print(html)
                 search_result = html.find('ul', {"class": "search-list"})
                 print(search_result)
                 items = search_result.find_all("li", {"class": "search-list__item"})
