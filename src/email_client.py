@@ -19,14 +19,25 @@ def read_text():
         template = file.read()
 
 
+def replace_params(house: House, template: str):
+    template = template.replace('{title}', house.title)
+    template = template.replace('{source}', house.source_name)
+    template = template.replace('{url}', house.url)
+    template = template.replace('{city}', house.city)
+    template = template.replace('{price}', house.price_text)
+    template = template.replace('{postal_code}', house.postal_code)
+    template = template.replace('{description}', house.description)
 
+    return template
 
-class EmailClient:
+def send(house: House, target_email: str):
+    message = MIMEMultipart('alternative')
+    message['Subject'] = f'{house.title}'
+    message['From'] = email_account
+    message['To'] = target_email
 
-    def send(self, house: House, target_email: str):
-        message = MIMEMultipart('alternative')
-        message['Subject'] = f'{house.title}'
-        message['From'] = email_account
-        message['To'] = target_email
+    text_template = read_text()
+    body = replace_params(house, text_template)
+
 
 
