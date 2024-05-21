@@ -4,3 +4,7 @@ Source: {source}
 Url: {url}
 City: {city}
 Image: {image}
+Price: {price}
+PostalCode: {postal_code}
+
+{description}
