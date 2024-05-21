@@ -1,0 +1,6 @@
+{title}
+-----------------------
+Source: {source}
+Url: {url}
+City: {city}
+Image: {image}
