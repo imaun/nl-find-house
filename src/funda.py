@@ -8,7 +8,7 @@ from models import House
 
 
 class Funda:
-    def __init__(self, source: Source)-> object:
+    def __init__(self, source: Source) -> object:
         self._sourceName: str = source.name
         self._sourceId: int = source.id
         self._city: str = source.city
@@ -24,5 +24,8 @@ class Funda:
         browser_options.add_argument('--enable-javascript')
         self._browser = webdriver.Chrome(options=browser_options)
 
-
-
+    def get_url(self):
+        url: str = self._baseUrl.rstrip('/') + '/' + self._pageUrl.lstrip('/')
+        if self._pageIndex == self._startPageIndex:
+            return url
+        return url + self._pagingFormat.replace('%', str(self._pageIndex))
